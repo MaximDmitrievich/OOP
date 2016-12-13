@@ -1,5 +1,6 @@
 #ifndef NODE_2_H
 #define NODE_2_H
+#include "Shape.h"
 #include <iostream>
 #include <cstdlib>
 #include <memory>

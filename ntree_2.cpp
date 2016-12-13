@@ -4,7 +4,7 @@ template <class T, class TT> NTree_2<T, TT>::NTree_2()
 {
 	this->root = nullptr;
 }
-template <class T, class TT> shared_ptr<TNode_2<TT>> NTree_2<T, TT>::Search(char *path)
+template <class T, class TT> shared_ptr<TNode_2<TT>> NTree_2<T, TT>::Search_2(char *path)
 {
 	shared_ptr<TNode_2<TT>> NodePath = nullptr;
 	shared_ptr<TNode_2<TT>> prev = nullptr;
@@ -63,35 +63,10 @@ template <class T, class TT> void NTree_2<T, TT>::Insert_2(shared_ptr<TT> value,
 		}
 	}
 }
-template <class T, class TT> shared_ptr<TNode_2<TT>> NTree_2<T, TT>::Search_2(char *path)
-{
-	shared_ptr<TNode_2<TT>> NodePath = nullptr;
-	shared_ptr<TNode_2<TT>> prev = nullptr;
-	while (*path != '\0') {
-		if (*path == 'r') {
-			NodePath = this->root;
-			prev = nullptr;
-			path++;
-			continue;
-		}
-		if (*path == 's') {
-			prev = NodePath;
-			NodePath = NodePath->Son();
-			path++;
-			continue;
-		}
-		if (*path == 'b') {
-			prev = NodePath;
-			NodePath = NodePath->Brother();
-			path++;
-			continue;
-		}
-	}
-	return NodePath;
-}
+
 template <class T, class TT> void NTree_2<T, TT>::Delete(char *path)
 {
-	shared_ptr<TNode_2<TT>> deleting = this->Search(path);
+	shared_ptr<TNode_2<TT>> deleting = this->Search_2(path);
 	deleterec(deleting);
 }
 template <class T, class TT> shared_ptr<TNode_2<TT>> NTree_2<T, TT>::Minimum() const
@@ -121,6 +96,7 @@ template <class T, class TT> NTree_2<T, TT>::~NTree_2()
 	}
 	this->root = nullptr;
 }
+
 
 #include "ntree.h"
 template class NTree_2<TShape, TNTree<TShape>>;

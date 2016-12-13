@@ -9,7 +9,6 @@ private:
 	shared_ptr<TNode_2<TT>> root;
 public:
 	NTree_2();
-	shared_ptr<TNode_2<TT>> Search(char *path);
 	void deleterec(shared_ptr<TNode_2<TT>> node);
 	void Insert_2(shared_ptr<TT> value, char *path, char *who);
 	shared_ptr<TNode_2<TT>> Search_2(char *path);
@@ -18,7 +17,7 @@ public:
 	shared_ptr<TNode_2<TT>> Maximum() const;
 	TIterator<TNode_2<TT>, TT> begin() const;
 	TIterator<TNode_2<TT>, TT> end() const;
-	~NTree_2();
+	virtual ~NTree_2();
 };
 
 #endif

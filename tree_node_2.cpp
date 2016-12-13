@@ -6,14 +6,14 @@ template <class T> TNode_2<T>::TNode_2()
 {
 	this->parent = nullptr;
 	this->brother = nullptr;
-	this->Son = nullptr;
+	this->son = nullptr;
 	this->value = nullptr;
 }
 template <class T> TNode_2<T>::TNode_2(shared_ptr<T> value)
 {
 	this->parent = nullptr;
 	this->brother = nullptr;
-	this->Son = nullptr;
+	this->son = nullptr;
 	this->value = value;
 }
 template <class T> void TNode_2<T>::SetSon(shared_ptr<TNode_2<T>> son)
@@ -48,6 +48,9 @@ template <class T>  TNode_2<T>::~TNode_2()
 {
 	this->parent = nullptr;
 	this->brother = nullptr;
-	this->Son = nullptr;
+	this->son = nullptr;
 	this->value = nullptr;
 }
+
+#include "ntree.h"
+template class TNode_2<TNTree<TShape>>;
