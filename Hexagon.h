@@ -7,7 +7,7 @@ using namespace std;
 class THexagon : public TShape {
 public:
 	THexagon();
-	THexagon(double ax, double ay, double bx, double by, double cx, double cy, double dx, double dy, double ex, double ey, double fx, double fy);
+	THexagon(double len);
 	THexagon(const THexagon &orig);
 	double Square() override;
 	void Print() override;
@@ -17,12 +17,7 @@ public:
 	THexagon& operator = (THexagon &right);
 	virtual ~THexagon() override;
 private:
-	TCord a;
-	TCord b;
-	TCord c;
-	TCord d;
-	TCord e;
-	TCord f;
+	double length;
 };
 
 #endif

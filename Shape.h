@@ -3,12 +3,7 @@
 #include <iostream>
 #include <cstdlib>
 #include <memory>
-
-class TCord {
-public:
-	double x;
-	double y;
-};
+#include <math.h>
 
 class TShape {
 public:

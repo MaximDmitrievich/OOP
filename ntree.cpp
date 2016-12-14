@@ -77,17 +77,25 @@ template <class T> void TNTree<T>::delete_rec(shared_ptr<TNode <T>> node)
 	}
 	node = nullptr;
 }
-template <class T> void TNTree<T>::Delete(shared_ptr<T> sh)
+template <class T> void TNTree<T>::Delete(char *path)
 {
-	shared_ptr<TNode <T>> deleting = this->Search(sh);
+	shared_ptr<TNode <T>> deleting = this->Search_Path(path);
 	delete_rec(deleting);
 }
 template <class T> void TNTree<T>::Print(char *path)
 {
 	shared_ptr<TNode<T>> Path = this->Search_Path(path);
+	if (Path == nullptr) {
+		cout << "DIRECTORY IS NULLPTR" << endl;
+		return;
+	}
 	shared_ptr<TShape> shape = Path->GetShape();
-	*path++;
-	cout << "/" << path;
+	cout << "Tree:";
+	while (*path) {
+		cout << "/" << *path;
+		path++;
+	}
+	cout << "  ";
 	shape->Print();
 }
 template <class T> shared_ptr<TNode<T>> TNTree<T>::Minimum() //minimum is the deepest son
@@ -110,7 +118,36 @@ template <class T> TIterator<TNode<T>, T> TNTree<T>::end() // end is the maximum
 {
 	return TIterator<TNode<T>, T>(this->Maximum());
 }
+template <class T> size_t TNTree<T>::Size()
+{
+	if (this->root == nullptr) {
+		return 0;
+	}
+	size_t result = 0;
+	TIterator<TNode<T>, T> it_loc = this->begin();
+	TIterator<TNode<T>, T> end_loc = this->end();
+	for (it_loc, end_loc; it_loc != end_loc; it_loc++) {
+		result++;
+	}
+	result++;
+	return result;
+}
+template <class T> future<void> TNTree<T>::sort_bg()
+{
 
+}
+template <class T> shared_ptr<T> TNTree<T>::operator [] (size_t i)
+{
+
+}
+template <class T> void TNTree<T>::sort()
+{
+
+}
+template <class T> void TNTree<T>::parallel_sort()
+{
+
+}
 template <class T> TNTree<T>::~TNTree()
 {
 	this->delete_rec(root);

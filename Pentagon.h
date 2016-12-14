@@ -8,21 +8,22 @@ using namespace std;
 class TPentagon : public TShape {
 public:
 	TPentagon();
-	TPentagon(double ax, double ay, double bx, double by, double cx, double cy, double dx, double dy, double ex, double ey);
+	TPentagon(double len);
 	TPentagon(const TPentagon &orig);
 	double Square() override;
 	void Print() override;
 	friend istream &operator >> (istream &is, TPentagon &pent);
 	friend ostream &operator << (ostream &os, TPentagon &pent);
+	bool operator > (const TPentagon &other);
+	bool operator < (const TPentagon &other);
+	bool operator >= (const TPentagon &other);
+	bool operator <= (const TPentagon &other);
+	operator double() const;
 	bool operator == (TPentagon &right);
 	TPentagon& operator = (TPentagon &right);
 	virtual ~TPentagon() override;
 private:
-	TCord a;
-	TCord b;
-	TCord c;
-	TCord d;
-	TCord e;
+	double length;
 };
 
 #endif
