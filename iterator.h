@@ -12,10 +12,10 @@ public:
 	{
 		node = n;
 	}
-	double operator * () //returns the value of the shape - square
+	shared_ptr<T> operator * () //returns the value of the shape - square
 	{
 		shared_ptr<T> out = node->GetShape();
-		return out->Square();
+		return out/*->Square()*/;
 	}
 	shared_ptr<T> operator -> () //returns shape from current node
 	{

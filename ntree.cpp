@@ -1,4 +1,5 @@
 #include "ntree.h"
+#include <exception>
 using namespace std;
 
 template <class T> TNTree<T>::TNTree()
@@ -31,13 +32,17 @@ template <class T> shared_ptr<TNode<T>> TNTree<T>::Search_Path(char *path)
 		}
 		if (*path == 's') {
 			prev = NodePath;
-			NodePath = NodePath->Son();
+			if (NodePath->Son()) {
+				NodePath = NodePath->Son();
+			}
 			path++;
 			continue;
 		}
 		if (*path == 'b') {
 			prev = NodePath;
-			NodePath = NodePath->Brother();
+			if (NodePath->Brother()) {
+				NodePath = NodePath->Brother();
+			}
 			path++;
 			continue;
 		}
@@ -67,20 +72,34 @@ template <class T> void TNTree<T>::Insert(shared_ptr<T> sh, char *path, char *wh
 		}
 	}
 }
-template <class T> void TNTree<T>::delete_rec(shared_ptr<TNode <T>> node)
-{
-	if (node->Brother() != nullptr) {
-		delete_rec(node->Brother());
-	}
-	if (node->Son() != nullptr) {
-		delete_rec(node->Son());
-	}
-	node = nullptr;
-}
 template <class T> void TNTree<T>::Delete(char *path)
 {
-	shared_ptr<TNode <T>> deleting = this->Search_Path(path);
-	delete_rec(deleting);
+	shared_ptr<TNode<T>> node = this->Search_Path(path);
+	if (node == this->root) {
+		this->root = nullptr;
+		return;
+	}
+	if (!(node->Brother()) && !(node->Son()) && node == node->Parent()->Son()) {
+		node = node->Parent();
+		node->SetSon(nullptr);
+	}
+	shared_ptr<TNode<T>> tmp = node;
+	shared_ptr<TNode<T>> tmp_older_brother = nullptr;
+	shared_ptr<TNode<T>> tmp_parent = nullptr;
+	while (tmp->Son()) {
+		tmp_parent = tmp;
+		tmp = tmp->Son();
+	}
+	while (tmp->Brother()) {
+		tmp_older_brother = tmp;
+		tmp = tmp->Brother();
+	}
+	if (tmp != node) {
+		node->SetShape(tmp->GetShape());
+		tmp_older_brother->SetBrother(nullptr);
+	}
+	tmp = nullptr;
+	
 }
 template <class T> void TNTree<T>::Print(char *path)
 {
@@ -134,15 +153,32 @@ template <class T> size_t TNTree<T>::Size()
 }
 template <class T> future<void> TNTree<T>::sort_bg()
 {
-
+	packaged_task<void(void)> task(bind(mem_fn(&TNTree<T>::parallel_sort), this));
+	future<void> res(task.get_future());
+	thread th(move(task));
+	th.detach();
+	return res;
 }
 template <class T> shared_ptr<T> TNTree<T>::operator [] (size_t i)
 {
-
+	if (i < this->Size() - 1) {
+		throw
+			invalid_argument("index greater then tree size");
+	}
+	size_t j = 0;
+	for (shared_ptr<T> a : *this) {
+		if (j == i) {
+			return a;
+		}
+		j++;
+	}
+	return shared_ptr<T>(nullptr);
 }
 template <class T> void TNTree<T>::sort()
 {
+	if (this->Size() > 1) {
 
+	}
 }
 template <class T> void TNTree<T>::parallel_sort()
 {
@@ -150,7 +186,10 @@ template <class T> void TNTree<T>::parallel_sort()
 }
 template <class T> TNTree<T>::~TNTree()
 {
-	this->delete_rec(root);
+	while (this->root != nullptr) {
+		this->Delete("r");
+	}
+	this->root = nullptr;
 }
 
 #include "Shape.h"

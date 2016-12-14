@@ -16,7 +16,6 @@ public:
 	shared_ptr<TNode <T>> Search(shared_ptr<T> sh);
 	shared_ptr<TNode <T>> Search_Path(char *path);
 	void Insert(shared_ptr<T> sh, char *path, char *who);
-	void delete_rec(shared_ptr<TNode <T>> node);
 	void Delete(char *path);
 	void Print(char *path);
 	shared_ptr<TNode<T>> Minimum();

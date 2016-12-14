@@ -24,7 +24,6 @@ void TPentagon::Print()
 istream &operator >> (istream &is, TPentagon &pent)
 {
 	is >> pent.length;
-	
 	return is;
 }
 ostream &operator << (ostream &os, TPentagon &pent)
@@ -33,23 +32,38 @@ ostream &operator << (ostream &os, TPentagon &pent)
 	os << pent.Square() << endl;
 	return os;
 }
-bool operator > (const TPentagon &other)
+bool TPentagon::operator > (TPentagon &right)
 {
-
+	if (this->Square() > right.Square()) {
+		return true;
+	}
+	else return false;
 }
-bool operator < (const TPentagon &other)
+bool TPentagon::operator < (TPentagon &right)
 {
-
+	if (this->Square() < right.Square()) {
+		return true;
+	}
+	else return false;
 }
-bool operator >= (const TPentagon &other)
+bool TPentagon::operator >= (TPentagon &right)
 {
-
+	if (this->Square() >= right.Square()) {
+		return true;
+	}
+	else return false;
 }
-bool operator <= (const TPentagon &other)
+bool TPentagon::operator <= (TPentagon &right)
 {
-
+	if (this->Square() <= right.Square()) {
+		return true;
+	}
+	else return false;
 }
-operator double() const;
+TPentagon::operator double() const
+{
+	return ((this->length * this->length) / 4.0) * sqrt(25.0 + 10.0 * sqrt(5));
+}
 bool TPentagon::operator == (TPentagon &right)
 {
 	if (this->Square() == right.Square()) {

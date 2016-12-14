@@ -13,6 +13,11 @@ public:
 	void Print() override;
 	friend istream &operator >> (istream &is, THexagon &hex);
 	friend ostream &operator << (ostream &os, THexagon &hex);
+	bool operator > (THexagon &right);
+	bool operator < (THexagon &right);
+	bool operator >= (THexagon &right);
+	bool operator <= (THexagon &right);
+	operator double() const;
 	bool operator == (THexagon &right);
 	THexagon& operator = (THexagon &right);
 	virtual ~THexagon() override;

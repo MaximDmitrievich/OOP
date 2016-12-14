@@ -10,6 +10,10 @@ template <class T> TNode<T>::TNode()
 }
 template <class T> TAllocBlock TNode<T>::TNode_allocator(sizeof(TNode<T>), 100);
 
+template <class T> void TNode<T>::SetShape(shared_ptr<T> shape)
+{
+	this->shape = shape;
+}
 template <class T> TNode<T>::TNode(shared_ptr<T> sh)
 {
 	brother = nullptr;

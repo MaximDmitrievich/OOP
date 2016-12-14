@@ -14,6 +14,11 @@ public:
 	void Print() override;
 	friend istream &operator >> (istream &is, TOctagon &oct);
 	friend ostream &operator << (ostream &os, TOctagon &oct);
+	bool operator > (TOctagon &right);
+	bool operator < (TOctagon &right);
+	bool operator >= (TOctagon &right);
+	bool operator <= (TOctagon &right);
+	operator double() const;
 	bool operator == (TOctagon &right);
 	TOctagon& operator = (TOctagon &right);
 	virtual ~TOctagon() override;

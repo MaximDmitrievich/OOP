@@ -32,6 +32,38 @@ ostream &operator << (ostream &os, TOctagon &oct)
 	os << oct.Square() << endl;
 	return os;
 }
+bool TOctagon::operator > (TOctagon &right)
+{
+	if (this->Square() > right.Square()) {
+		return true;
+	}
+	else return false;
+}
+bool TOctagon::operator < (TOctagon &right)
+{
+	if (this->Square() < right.Square()) {
+		return true;
+	}
+	else return false;
+}
+bool TOctagon::operator >= (TOctagon &right)
+{
+	if (this->Square() >= right.Square()) {
+		return true;
+	}
+	else return false;
+}
+bool TOctagon::operator <= (TOctagon &right)
+{
+	if (this->Square() <= right.Square()) {
+		return true;
+	}
+	else return false;
+}
+TOctagon::operator double() const
+{
+	return 2.0 * (this->length * this->length) * (1.0 + sqrt(2.0));
+}
 bool TOctagon::operator == (TOctagon &right)
 {
 	if (this->Square() == right.Square()) {

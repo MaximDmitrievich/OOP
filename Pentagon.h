@@ -14,10 +14,10 @@ public:
 	void Print() override;
 	friend istream &operator >> (istream &is, TPentagon &pent);
 	friend ostream &operator << (ostream &os, TPentagon &pent);
-	bool operator > (const TPentagon &other);
-	bool operator < (const TPentagon &other);
-	bool operator >= (const TPentagon &other);
-	bool operator <= (const TPentagon &other);
+	bool operator > (TPentagon &right);
+	bool operator < (TPentagon &right);
+	bool operator >= (TPentagon &right);
+	bool operator <= (TPentagon &right);
 	operator double() const;
 	bool operator == (TPentagon &right);
 	TPentagon& operator = (TPentagon &right);

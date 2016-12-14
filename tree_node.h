@@ -19,6 +19,7 @@ public:
 	void SetBrother(shared_ptr<TNode<T>> node);
 	void SetSon(shared_ptr<TNode<T>> node);
 	void SetParent(shared_ptr<TNode<T>> node);
+	void SetShape(shared_ptr<T> shape);
 	shared_ptr<TNode<T>> Son();
 	shared_ptr<TNode<T>> Brother();
 	shared_ptr<TNode<T>> Parent();

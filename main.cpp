@@ -10,7 +10,7 @@ int main(int argc, char *argv[])
 	cout << "6 for inserting hex" << endl;
 	cout << "8 for inserting oct" << endl;
 	cout << "t for inserting in global tree" << endl;
-	cout << "d for deleting chain of directorites in path" << endl;
+	cout << "d for delete shape" << endl;
 	cout << "l for iterating local tree" << endl;
 	cout << "s for size of tree" << endl;
 	cout << "i for iterating" << endl;
@@ -29,7 +29,7 @@ int main(int argc, char *argv[])
 		cin >> cmd;
 		switch (cmd) {
 		case '5': {
-			cout << "LENGTH OF PENTAGON: ";
+			cout << "LENGTH OF PENTAGON'S EDGE: ";
 			cin >> length;
 			shared_ptr<TShape> shape(new TPentagon(length));
 			cout << "DIRECTORY: ";
@@ -42,7 +42,7 @@ int main(int argc, char *argv[])
 			break;
 		}
 		case '6': {
-			cout << "LENGTH OF HEXAGON: ";
+			cout << "LENGTH OF HEXAGON'S EDGE: ";
 			cin >> length;
 			shared_ptr<TShape> shape(new THexagon(length));
 			cout << "DIRECTORY: ";
@@ -55,7 +55,7 @@ int main(int argc, char *argv[])
 			break;
 		}
 		case '8': {
-			cout << "OCTAGON: ";
+			cout << "LENGTH OCTAGON'S EDGE: ";
 			cin >> length;
 			shared_ptr<TShape> shape(new TOctagon(length));
 			cout << "DIRECTORY: ";
@@ -83,6 +83,7 @@ int main(int argc, char *argv[])
 			cin >> path;
 			path[29] = '\0';
 			tree->Delete(path);
+			cout << "OK" << endl;
 			break;
 		}
 		case 'p': {
