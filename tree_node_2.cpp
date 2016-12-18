@@ -54,3 +54,5 @@ template <class T>  TNode_2<T>::~TNode_2()
 
 #include "ntree.h"
 template class TNode_2<TNTree<TShape>>;
+#include <functional>
+template class TNode_2<function<void(void)>>;

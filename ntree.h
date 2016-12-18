@@ -4,12 +4,15 @@
 #include "iterator.h"
 #include <memory>
 #include <future>
+#include <thread>
 #include <mutex>
+#include <functional>
 
 template <class T> class TNTree {
 private:
 	shared_ptr<TNode <T>> root;
 	future<void> sort_bg();
+	recursive_mutex tree_mutex;
 public:
 	TNTree();
 	TNTree(shared_ptr<TNTree<T>> &orig);
@@ -28,7 +31,6 @@ public:
 	shared_ptr<T> operator [] (size_t i);
 	void sort();
 	void parallel_sort();
-
 
 	virtual ~TNTree();
 };

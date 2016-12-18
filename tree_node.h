@@ -4,6 +4,9 @@
 #include "Hexagon.h"
 #include "Octagon.h"
 #include "allocator.h"
+#include <thread>
+#include <mutex>
+#include <functional>
 
 
 template <class T> class TNode : enable_shared_from_this<TNode<T>> {
@@ -13,9 +16,10 @@ private:
 	shared_ptr<TNode<T>> parent;
 	shared_ptr<T> shape;
 	static TAllocBlock TNode_allocator;
+	recursive_mutex *tree_mutex;
 public:
-	TNode();
-	TNode(shared_ptr<T> shape);
+	TNode(recursive_mutex *parent);
+	TNode(recursive_mutex *parent, shared_ptr<T> shape);
 	void SetBrother(shared_ptr<TNode<T>> node);
 	void SetSon(shared_ptr<TNode<T>> node);
 	void SetParent(shared_ptr<TNode<T>> node);

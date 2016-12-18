@@ -14,8 +14,10 @@ public:
 	}
 	shared_ptr<T> operator * () //returns the value of the shape - square
 	{
-		shared_ptr<T> out = node->GetShape();
-		return out/*->Square()*/;
+		if (node != nullptr) {
+			return node->GetShape();
+		}
+		else return nullptr;
 	}
 	shared_ptr<T> operator -> () //returns shape from current node
 	{
@@ -31,7 +33,7 @@ public:
 					node = node->Son();
 				}
 			}
-		}else if (node->Parent()) {
+		} else if (node->Parent()) {
 			node = node->Parent();
 		}
 	}

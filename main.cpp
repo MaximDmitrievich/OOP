@@ -1,11 +1,13 @@
 #include "ntree.h"
 #include "ntree_2.h"
+#include <random>
 
 using namespace std;
 
 int main(int argc, char *argv[])
 {
 	cout << "=============================================" << endl;
+	cout << "w for tutorial play" << endl;
 	cout << "5 for inserting pent" << endl;
 	cout << "6 for inserting hex" << endl;
 	cout << "8 for inserting oct" << endl;
@@ -14,6 +16,8 @@ int main(int argc, char *argv[])
 	cout << "l for iterating local tree" << endl;
 	cout << "s for size of tree" << endl;
 	cout << "i for iterating" << endl;
+	cout << "h for Hoar sort" << endl;
+	cout << "j for parallel sort" << endl;
 	cout << "p for print by path" << endl;
 	cout << "q for quit" << endl;
 	cout << "=============================================" << endl << endl;
@@ -22,12 +26,70 @@ int main(int argc, char *argv[])
 	char who[2] = { '\0' };
 	double length = 0.0;
 	shared_ptr<TNTree<TShape>> tree(new TNTree<TShape>());
-	shared_ptr<NTree_2<TShape, TNTree<TShape>>> globaltree(new NTree_2<TShape, TNTree<TShape>>());
+	shared_ptr<NTree_2<TNTree<TShape>>> globaltree(new NTree_2<TNTree<TShape>>());
 	while (true) {
 		memset(path, '\0', sizeof(char));
 		cout << "cmd: ";
 		cin >> cmd;
 		switch (cmd) {
+		case 'w': {
+			typedef function<void(void)> command;
+			NTree_2<command> tree_cmd;
+			
+			command cmd_insert_5 = [&]() {
+				default_random_engine generator;
+				uniform_int_distribution<int> dist(1, 100);
+
+				for (int i = 0; i < 10; i++) {
+					int side = dist(generator);
+					tree->Insert((shared_ptr<TShape>)new TPentagon(side), "r\0", "s\0");
+				}
+			};
+			command cmd_insert_6 = [&]() {
+				default_random_engine generator;
+				uniform_int_distribution<int> dist(1, 100);
+
+				for (int i = 0; i < 10; i++) {
+					int side = dist(generator);
+					tree->Insert((shared_ptr<TShape>)new THexagon(side), "r\0", "s\0");
+				}
+			};
+			command cmd_insert_8 = [&]() {
+				default_random_engine generator;
+				uniform_int_distribution<int> dist(1, 1000);
+
+				for (int i = 0; i < 10; i++) {
+					int side = dist(generator);
+					tree->Insert((shared_ptr<TShape>)new TOctagon(side), "r\0", "s\0");
+				}
+			};
+			command cmd_print = [&]() {
+				TIterator<TNode<TShape>, TShape> it_loc = tree->begin();
+				TIterator<TNode<TShape>, TShape> end_loc = tree->end();
+				for (it_loc, end_loc; it_loc != end_loc; it_loc++) {
+					(*it_loc)->Print();
+				}
+				(*it_loc)->Print();
+			};
+			tree_cmd.Insert_2(shared_ptr<command>(&cmd_print, [](command *) {}), "r\0", "r\0");
+			tree_cmd.Insert_2(shared_ptr<command>(&cmd_insert_5, [](command *) {}), "r\0", "s\0");
+			tree_cmd.Insert_2(shared_ptr<command>(&cmd_insert_6, [](command *) {}), "rs\0", "s\0");
+			tree_cmd.Insert_2(shared_ptr<command>(&cmd_insert_8, [](command *) {}), "rss\0", "s\0");
+
+			TIterator<TNode_2<command>, command> it_loc = tree_cmd.begin();
+			TIterator<TNode_2<command>, command> end_loc = tree_cmd.end();
+			for (it_loc, end_loc; it_loc != end_loc; it_loc++) {
+				shared_ptr<command> cmd = (*it_loc);
+				future<void> ft = async(*cmd);
+				ft.get();
+				thread(*cmd).detach();
+			}
+			shared_ptr<command> cmd = (*it_loc);
+			future<void> ft = async(*cmd);
+			ft.get();
+			thread(*cmd).detach();
+			break;
+		}
 		case '5': {
 			cout << "LENGTH OF PENTAGON'S EDGE: ";
 			cin >> length;
@@ -60,10 +122,23 @@ int main(int argc, char *argv[])
 			shared_ptr<TShape> shape(new TOctagon(length));
 			cout << "DIRECTORY: ";
 			cin >> path;
+			path[29] = '\0';
 			cout << "WHO: ";
 			cin >> who;
 			tree->Insert(shape, path, who);
 			cout << "OK" << endl;
+			break;
+		}
+		case 'h': {
+			cout << "SORTING" << endl;
+			tree->sort();
+			cout << "DONE" << endl;
+			break;
+		}
+		case 'j': {
+			cout << "PARALLEL SORTING" << endl;
+			tree->parallel_sort();
+			cout << "DONE" << endl;
 			break;
 		}
 		case 't': {
@@ -97,9 +172,9 @@ int main(int argc, char *argv[])
 			TIterator<TNode<TShape>, TShape> it_loc = tree->begin();
 			TIterator<TNode<TShape>, TShape> end_loc = tree->end();
 			for (it_loc, end_loc; it_loc != end_loc; it_loc++) {
-				cout << *it_loc << endl;
+				(*it_loc)->Print();
 			}
-			cout << *it_loc << endl;
+			(*it_loc)->Print();
 			break;
 		}
 		case 's': {
@@ -113,16 +188,15 @@ int main(int argc, char *argv[])
 			TIterator<TNode<TShape>, TShape> it_in = it->begin();
 			TIterator<TNode<TShape>, TShape> end_in = it->end();
 			for (it_in, end_in; it_in != end_in; it_in++) {
-				cout << *it_in << endl;
+				(*it_in)->Print();
 			}
-			cout << *it_in << endl;
-			continue;
+			(*it_in)->Print();
 		}
 		break;
 		}
 		case 'q': {
-			system("pause");
 			return 0;
+			break;
 		}
 		}
 	}

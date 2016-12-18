@@ -12,7 +12,7 @@ public:
 	double Square() override;
 	void Print() override;
 	friend istream &operator >> (istream &is, THexagon &hex);
-	friend ostream &operator << (ostream &os, THexagon &hex);
+	friend ostream &operator << (ostream &os, const THexagon &hex);
 	bool operator > (THexagon &right);
 	bool operator < (THexagon &right);
 	bool operator >= (THexagon &right);

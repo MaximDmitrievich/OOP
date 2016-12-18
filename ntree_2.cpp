@@ -1,10 +1,10 @@
 #include "ntree_2.h"
 
-template <class T, class TT> NTree_2<T, TT>::NTree_2()
+template <class TT> NTree_2<TT>::NTree_2()
 {
 	this->root = nullptr;
 }
-template <class T, class TT> shared_ptr<TNode_2<TT>> NTree_2<T, TT>::Search_2(char *path)
+template <class TT> shared_ptr<TNode_2<TT>> NTree_2<TT>::Search_2(char *path)
 {
 	shared_ptr<TNode_2<TT>> NodePath = nullptr;
 	shared_ptr<TNode_2<TT>> prev = nullptr;
@@ -30,7 +30,7 @@ template <class T, class TT> shared_ptr<TNode_2<TT>> NTree_2<T, TT>::Search_2(ch
 	}
 	return NodePath;
 }
-template <class T, class TT> void NTree_2<T, TT>::deleterec(shared_ptr<TNode_2<TT>> node)
+template <class TT> void NTree_2<TT>::deleterec(shared_ptr<TNode_2<TT>> node)
 {
 	if (node->Brother() != nullptr) {
 		deleterec(node->Brother());
@@ -40,7 +40,7 @@ template <class T, class TT> void NTree_2<T, TT>::deleterec(shared_ptr<TNode_2<T
 	}
 	node = nullptr;
 }
-template <class T, class TT> void NTree_2<T, TT>::Insert_2(shared_ptr<TT> value, char *path, char *who)
+template <class TT> void NTree_2<TT>::Insert_2(shared_ptr<TT> value, char *path, char *who)
 {
 	shared_ptr<TNode_2<TT>> nd(new TNode_2<TT>(value));
 	if ((this->root == nullptr)) {
@@ -64,12 +64,12 @@ template <class T, class TT> void NTree_2<T, TT>::Insert_2(shared_ptr<TT> value,
 	}
 }
 
-template <class T, class TT> void NTree_2<T, TT>::Delete(char *path)
+template <class TT> void NTree_2<TT>::Delete(char *path)
 {
 	shared_ptr<TNode_2<TT>> deleting = this->Search_2(path);
 	deleterec(deleting);
 }
-template <class T, class TT> shared_ptr<TNode_2<TT>> NTree_2<T, TT>::Minimum() const
+template <class TT> shared_ptr<TNode_2<TT>> NTree_2<TT>::Minimum() const
 {
 	shared_ptr<TNode_2<TT>> node = this->root;
 	while (node->Son()) {
@@ -77,19 +77,19 @@ template <class T, class TT> shared_ptr<TNode_2<TT>> NTree_2<T, TT>::Minimum() c
 	}
 	return node;
 }
-template <class T, class TT> shared_ptr<TNode_2<TT>> NTree_2<T, TT>::Maximum() const
+template <class TT> shared_ptr<TNode_2<TT>> NTree_2<TT>::Maximum() const
 {
 	return this->root;
 }
-template <class T, class TT> TIterator<TNode_2<TT>, TT> NTree_2<T, TT>::begin() const
+template <class TT> TIterator<TNode_2<TT>, TT> NTree_2<TT>::begin() const
 {
 	return TIterator<TNode_2<TT>, TT>(this->Minimum());
 }
-template <class T, class TT> TIterator<TNode_2<TT>, TT> NTree_2<T, TT>::end() const
+template <class TT> TIterator<TNode_2<TT>, TT> NTree_2<TT>::end() const
 {
 	return TIterator<TNode_2<TT>, TT>(this->Maximum());
 }
-template <class T, class TT> NTree_2<T, TT>::~NTree_2()
+template <class TT> NTree_2<TT>::~NTree_2()
 {
 	if (this->root) {
 		deleterec(this->root);
@@ -99,4 +99,7 @@ template <class T, class TT> NTree_2<T, TT>::~NTree_2()
 
 
 #include "ntree.h"
-template class NTree_2<TShape, TNTree<TShape>>;
+template class NTree_2<TNTree<TShape>>;
+#include <functional>
+template class TNode_2<function<void(void)>>;
+template class NTree_2<function<void(void)>>;

@@ -13,7 +13,7 @@ public:
 	double Square() override;
 	void Print() override;
 	friend istream &operator >> (istream &is, TOctagon &oct);
-	friend ostream &operator << (ostream &os, TOctagon &oct);
+	friend ostream &operator << (ostream &os, const TOctagon &oct);
 	bool operator > (TOctagon &right);
 	bool operator < (TOctagon &right);
 	bool operator >= (TOctagon &right);

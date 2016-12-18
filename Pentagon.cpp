@@ -3,7 +3,6 @@
 TPentagon::TPentagon()
 {
 	this->length = 0.0;
-
 }
 TPentagon::TPentagon(double len)
 {
@@ -26,36 +25,35 @@ istream &operator >> (istream &is, TPentagon &pent)
 	is >> pent.length;
 	return is;
 }
-ostream &operator << (ostream &os, TPentagon &pent)
+ostream &operator << (ostream &os, const TPentagon &pent)
 {
-	os << pent.length << endl;
-	os << pent.Square() << endl;
+	os << double(pent) << endl;
 	return os;
 }
 bool TPentagon::operator > (TPentagon &right)
 {
-	if (this->Square() > right.Square()) {
+	if (this->Square() > double(right)) {
 		return true;
 	}
 	else return false;
 }
 bool TPentagon::operator < (TPentagon &right)
 {
-	if (this->Square() < right.Square()) {
+	if (this->Square() < double(right)) {
 		return true;
 	}
 	else return false;
 }
 bool TPentagon::operator >= (TPentagon &right)
 {
-	if (this->Square() >= right.Square()) {
+	if (this->Square() >= double(right)) {
 		return true;
 	}
 	else return false;
 }
 bool TPentagon::operator <= (TPentagon &right)
 {
-	if (this->Square() <= right.Square()) {
+	if (this->Square() <= double(right)) {
 		return true;
 	}
 	else return false;
@@ -66,7 +64,7 @@ TPentagon::operator double() const
 }
 bool TPentagon::operator == (TPentagon &right)
 {
-	if (this->Square() == right.Square()) {
+	if (this->Square() == double(right)) {
 		return true;
 	}
 	else return false;

@@ -4,7 +4,7 @@
 #include "iterator.h"
 #include "IRemoveCriteria.h"
 
-template <class T, class TT> class NTree_2 { //T - type of value,  TT - type of the container of 1 level
+template <class TT> class NTree_2 { //T - type of value,  TT - type of the container of 1 level
 private:
 	shared_ptr<TNode_2<TT>> root;
 public:

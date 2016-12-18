@@ -26,36 +26,35 @@ istream &operator >> (istream &is, THexagon &hex)
 	is >> hex.length;
 	return is;
 }
-ostream &operator << (ostream &os, THexagon &hex)
+ostream &operator << (ostream &os, const THexagon &hex)
 {
-	os << hex.length << endl;
-	os << hex.Square() << endl;
+	os << double(hex) << endl;
 	return os;
 }
 bool THexagon::operator > (THexagon &right)
 {
-	if (this->Square() > right.Square()) {
+	if (this->Square() > double(right)) {
 		return true;
 	}
 	else return false;
 }
 bool THexagon::operator < (THexagon &right)
 {
-	if (this->Square() < right.Square()) {
+	if (this->Square() < double(right)) {
 		return true;
 	}
 	else return false;
 }
 bool THexagon::operator >= (THexagon &right)
 {
-	if (this->Square() >= right.Square()) {
+	if (this->Square() >= double(right)) {
 		return true;
 	}
 	else return false;
 }
 bool THexagon::operator <= (THexagon &right)
 {
-	if (this->Square() <= right.Square()) {
+	if (this->Square() <= double(right)) {
 		return true;
 	}
 	else return false;
@@ -66,7 +65,7 @@ THexagon::operator double() const
 }
 bool THexagon::operator == (THexagon &right)
 {
-	if (this->Square() == right.Square()) {
+	if (this->Square() == double(right)) {
 		return true;
 	}
 	else return false;

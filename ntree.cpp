@@ -12,6 +12,7 @@ template <class T> TNTree<T>::TNTree(shared_ptr<TNTree<T>> &orig)
 }
 template <class T> shared_ptr<TNode<T>> TNTree<T>::Search(shared_ptr<T> sh)
 {
+	//lock_guard<recursive_mutex> lock(this->tree_mutex);
 	if (root->GetShape() == sh) {
 		return root;
 	}
@@ -21,6 +22,7 @@ template <class T> shared_ptr<TNode<T>> TNTree<T>::Search(shared_ptr<T> sh)
 }
 template <class T> shared_ptr<TNode<T>> TNTree<T>::Search_Path(char *path)
 {
+	//lock_guard<recursive_mutex> lock(this->tree_mutex);
 	shared_ptr<TNode<T>> NodePath = nullptr;
 	shared_ptr<TNode<T>> prev = nullptr;
 	while (*path != '\0') {
@@ -51,21 +53,28 @@ template <class T> shared_ptr<TNode<T>> TNTree<T>::Search_Path(char *path)
 }
 template <class T> void TNTree<T>::Insert(shared_ptr<T> sh, char *path, char *who)
 {
-	shared_ptr<TNode<T>> nd (new TNode<T>(sh));
+	//lock_guard<recursive_mutex> lock(this->tree_mutex);
+	shared_ptr<TNode<T>> nd (new TNode<T>(&(this->tree_mutex), sh));
 	if ((this->root == nullptr)) {
 		this->root = nd;
 	}
 	else {
 		shared_ptr<TNode<T>> Nodepath = Search_Path(path);
 		if (*who == 's') {
-				Nodepath->SetSon(nd);
-				nd->SetParent(Nodepath);
+			while (Nodepath->Son()) {
+				Nodepath = Nodepath->Son();
+			}
+			Nodepath->SetSon(nd);
+			nd->SetParent(Nodepath);
 		}
 		if (*who == 'b') {
 			if (Nodepath == root) {
 				cout << "ROOT CAN'T HAVE BROTHERS" << endl;
 			}
 			else {
+				while (Nodepath->Brother()) {
+					Nodepath = Nodepath->Brother();
+				}
 				Nodepath->SetBrother(nd);
 				nd->SetParent(Nodepath->Parent());
 			}
@@ -74,35 +83,34 @@ template <class T> void TNTree<T>::Insert(shared_ptr<T> sh, char *path, char *wh
 }
 template <class T> void TNTree<T>::Delete(char *path)
 {
-	shared_ptr<TNode<T>> node = this->Search_Path(path);
-	if (node == this->root) {
-		this->root = nullptr;
+	//lock_guard<recursive_mutex> lock(this->tree_mutex);
+	shared_ptr<TNode<T>> removednode = this->Search_Path(path);
+	if (removednode == nullptr) {
 		return;
 	}
-	if (!(node->Brother()) && !(node->Son()) && node == node->Parent()->Son()) {
-		node = node->Parent();
-		node->SetSon(nullptr);
+	shared_ptr<TNode<T>> current = this->root;
+	if (current == this->root) {
+		this->root = current->Son();
+		current = nullptr;
+		return;
 	}
-	shared_ptr<TNode<T>> tmp = node;
-	shared_ptr<TNode<T>> tmp_older_brother = nullptr;
-	shared_ptr<TNode<T>> tmp_parent = nullptr;
-	while (tmp->Son()) {
-		tmp_parent = tmp;
-		tmp = tmp->Son();
+	shared_ptr<TNode<T>> parent = nullptr;
+	while (current->Son() != nullptr) {
+		parent = current;
+		current = current->Son();
 	}
-	while (tmp->Brother()) {
-		tmp_older_brother = tmp;
-		tmp = tmp->Brother();
+	if (current != removednode) {
+		removednode->SetShape(current->GetShape());
 	}
-	if (tmp != node) {
-		node->SetShape(tmp->GetShape());
-		tmp_older_brother->SetBrother(nullptr);
+	parent->SetSon(current->Brother());
+	if (parent->Son() == nullptr) {
+		cout << "EEEE " << endl;
 	}
-	tmp = nullptr;
-	
+	current = nullptr;
 }
 template <class T> void TNTree<T>::Print(char *path)
 {
+	//lock_guard<recursive_mutex> lock(this->tree_mutex);
 	shared_ptr<TNode<T>> Path = this->Search_Path(path);
 	if (Path == nullptr) {
 		cout << "DIRECTORY IS NULLPTR" << endl;
@@ -119,6 +127,7 @@ template <class T> void TNTree<T>::Print(char *path)
 }
 template <class T> shared_ptr<TNode<T>> TNTree<T>::Minimum() //minimum is the deepest son
 {
+	//lock_guard<recursive_mutex> lock(this->tree_mutex);
 	shared_ptr<TNode<T>> node = this->root;
 	while (node->Son()) {
 		node = node->Son();
@@ -127,6 +136,7 @@ template <class T> shared_ptr<TNode<T>> TNTree<T>::Minimum() //minimum is the de
 }
 template <class T> shared_ptr<TNode<T>> TNTree<T>::Maximum() //maximum is the root
 {
+	//lock_guard<recursive_mutex> lock(tree_mutex);
 	return this->root;
 }
 template <class T> TIterator<TNode<T>, T> TNTree<T>::begin() //begin == minimum
@@ -139,6 +149,7 @@ template <class T> TIterator<TNode<T>, T> TNTree<T>::end() // end is the maximum
 }
 template <class T> size_t TNTree<T>::Size()
 {
+	//lock_guard<recursive_mutex> lock(this->tree_mutex);
 	if (this->root == nullptr) {
 		return 0;
 	}
@@ -161,6 +172,7 @@ template <class T> future<void> TNTree<T>::sort_bg()
 }
 template <class T> shared_ptr<T> TNTree<T>::operator [] (size_t i)
 {
+	//lock_guard<recursive_mutex> lock(this->tree_mutex);
 	if (i < this->Size() - 1) {
 		throw
 			invalid_argument("index greater then tree size");
@@ -177,17 +189,76 @@ template <class T> shared_ptr<T> TNTree<T>::operator [] (size_t i)
 template <class T> void TNTree<T>::sort()
 {
 	if (this->Size() > 1) {
+		shared_ptr<T> middle = (this->Search_Path("r\0"))->GetShape();
+		this->Delete("r\0");
 
+		shared_ptr<TNTree<T>> left(new TNTree<TShape>);
+		shared_ptr<TNTree<T>> right(new TNTree<TShape>);
+		while (this->Size() != 0) {
+			shared_ptr<T> item = (this->Search_Path("r\0"))->GetShape();
+			this->Delete("r\0");
+			if (item < middle) {
+				left->Insert(item, "r\0", "r\0");
+			}
+			else {
+				right->Insert(item, "r\0", "r\0");
+			}
+			left->sort();
+			right->sort();
+			size_t l = left->Size();
+			size_t r = right->Size();
+			while (l > 0) {
+				this->Insert((left->Search_Path("r\0"))->GetShape(), "r\0", "s\0");
+				l--;
+			}
+			this->Insert(middle, "r\0", "s\0");
+			while (r > 0) {
+				this->Insert((right->Search_Path("r\0"))->GetShape(), "r\0", "s\0");
+				r--;
+			}
+		}
 	}
 }
 template <class T> void TNTree<T>::parallel_sort()
 {
+	if (this->Size() > 1) {
+		shared_ptr<T> middle = (this->Search_Path("r\0"))->GetShape();
+		this->Delete("r\0");
 
+		shared_ptr<TNTree<T>> left (new TNTree<TShape>);
+		shared_ptr<TNTree<T>> right(new TNTree<TShape>);
+		while (this->Size() != 0) {
+			shared_ptr<T> item = (this->Search_Path("r\0"))->GetShape();
+			this->Delete("r\0");
+			if (item < middle) {
+				left->Insert(item, "r\0", "r\0");
+			}
+			else {
+				right->Insert(item, "r\0", "r\0");
+			}
+			future<void> left_res = left->sort_bg();
+			future<void> right_res = right->sort_bg();
+
+			left_res.get();
+			size_t l = left->Size();
+			size_t r = right->Size();
+			while (l > 0) {
+				this->Insert((left->Search_Path("r\0"))->GetShape(), "r\0", "s\0");
+				l--;
+			}
+			this->Insert(middle, "r\0", "s\0");
+			right_res.get();
+			while (r > 0) {
+				this->Insert((right->Search_Path("r\0"))->GetShape(), "r\0", "s\0");
+				r--;
+			}
+		}
+	}
 }
 template <class T> TNTree<T>::~TNTree()
 {
 	while (this->root != nullptr) {
-		this->Delete("r");
+		this->Delete("r\0");
 	}
 	this->root = nullptr;
 }
