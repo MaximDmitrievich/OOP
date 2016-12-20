@@ -12,7 +12,7 @@ template <class T> TNTree<T>::TNTree(shared_ptr<TNTree<T>> &orig)
 }
 template <class T> shared_ptr<TNode<T>> TNTree<T>::Search(shared_ptr<T> sh)
 {
-	//lock_guard<recursive_mutex> lock(this->tree_mutex);
+	lock_guard<recursive_mutex> lock(this->tree_mutex);
 	if (root->GetShape() == sh) {
 		return root;
 	}
@@ -22,7 +22,7 @@ template <class T> shared_ptr<TNode<T>> TNTree<T>::Search(shared_ptr<T> sh)
 }
 template <class T> shared_ptr<TNode<T>> TNTree<T>::Search_Path(char *path)
 {
-	//lock_guard<recursive_mutex> lock(this->tree_mutex);
+	lock_guard<recursive_mutex> lock(this->tree_mutex);
 	shared_ptr<TNode<T>> NodePath = nullptr;
 	shared_ptr<TNode<T>> prev = nullptr;
 	while (*path != '\0') {
@@ -53,7 +53,7 @@ template <class T> shared_ptr<TNode<T>> TNTree<T>::Search_Path(char *path)
 }
 template <class T> void TNTree<T>::Insert(shared_ptr<T> sh, char *path, char *who)
 {
-	//lock_guard<recursive_mutex> lock(this->tree_mutex);
+	lock_guard<recursive_mutex> lock(this->tree_mutex);
 	shared_ptr<TNode<T>> nd (new TNode<T>(&(this->tree_mutex), sh));
 	if ((this->root == nullptr)) {
 		this->root = nd;
@@ -83,14 +83,20 @@ template <class T> void TNTree<T>::Insert(shared_ptr<T> sh, char *path, char *wh
 }
 template <class T> void TNTree<T>::Delete(char *path)
 {
-	//lock_guard<recursive_mutex> lock(this->tree_mutex);
+	lock_guard<recursive_mutex> lock(this->tree_mutex);
 	shared_ptr<TNode<T>> removednode = this->Search_Path(path);
 	if (removednode == nullptr) {
 		return;
 	}
 	shared_ptr<TNode<T>> current = this->root;
 	if (current == this->root) {
-		this->root = current->Son();
+		if (current->Son()) {
+			current->SetParent(nullptr);
+			this->root = current->Son();
+		}
+		else {
+			this->root = nullptr;
+		}
 		current = nullptr;
 		return;
 	}
@@ -102,15 +108,18 @@ template <class T> void TNTree<T>::Delete(char *path)
 	if (current != removednode) {
 		removednode->SetShape(current->GetShape());
 	}
-	parent->SetSon(current->Brother());
-	if (parent->Son() == nullptr) {
-		cout << "EEEE " << endl;
+	if (current->Brother()) {
+		current->SetParent(nullptr);
+		parent->SetSon(current->Brother());
+	}
+	else {
+		parent->SetSon(nullptr);
 	}
 	current = nullptr;
 }
 template <class T> void TNTree<T>::Print(char *path)
 {
-	//lock_guard<recursive_mutex> lock(this->tree_mutex);
+	lock_guard<recursive_mutex> lock(this->tree_mutex);
 	shared_ptr<TNode<T>> Path = this->Search_Path(path);
 	if (Path == nullptr) {
 		cout << "DIRECTORY IS NULLPTR" << endl;
@@ -127,7 +136,7 @@ template <class T> void TNTree<T>::Print(char *path)
 }
 template <class T> shared_ptr<TNode<T>> TNTree<T>::Minimum() //minimum is the deepest son
 {
-	//lock_guard<recursive_mutex> lock(this->tree_mutex);
+	lock_guard<recursive_mutex> lock(this->tree_mutex);
 	shared_ptr<TNode<T>> node = this->root;
 	while (node->Son()) {
 		node = node->Son();
@@ -136,7 +145,7 @@ template <class T> shared_ptr<TNode<T>> TNTree<T>::Minimum() //minimum is the de
 }
 template <class T> shared_ptr<TNode<T>> TNTree<T>::Maximum() //maximum is the root
 {
-	//lock_guard<recursive_mutex> lock(tree_mutex);
+	lock_guard<recursive_mutex> lock(tree_mutex);
 	return this->root;
 }
 template <class T> TIterator<TNode<T>, T> TNTree<T>::begin() //begin == minimum
@@ -149,7 +158,7 @@ template <class T> TIterator<TNode<T>, T> TNTree<T>::end() // end is the maximum
 }
 template <class T> size_t TNTree<T>::Size()
 {
-	//lock_guard<recursive_mutex> lock(this->tree_mutex);
+	lock_guard<recursive_mutex> lock(this->tree_mutex);
 	if (this->root == nullptr) {
 		return 0;
 	}
@@ -172,7 +181,7 @@ template <class T> future<void> TNTree<T>::sort_bg()
 }
 template <class T> shared_ptr<T> TNTree<T>::operator [] (size_t i)
 {
-	//lock_guard<recursive_mutex> lock(this->tree_mutex);
+	lock_guard<recursive_mutex> lock(this->tree_mutex);
 	if (i < this->Size() - 1) {
 		throw
 			invalid_argument("index greater then tree size");

@@ -10,9 +10,9 @@
 
 template <class T> class TNTree {
 private:
+	recursive_mutex tree_mutex;
 	shared_ptr<TNode <T>> root;
 	future<void> sort_bg();
-	recursive_mutex tree_mutex;
 public:
 	TNTree();
 	TNTree(shared_ptr<TNTree<T>> &orig);

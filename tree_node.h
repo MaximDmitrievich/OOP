@@ -11,12 +11,12 @@
 
 template <class T> class TNode : enable_shared_from_this<TNode<T>> {
 private:
+	recursive_mutex *tree_mutex;
 	shared_ptr<TNode<T>> brother;
 	shared_ptr<TNode<T>> son;
 	shared_ptr<TNode<T>> parent;
 	shared_ptr<T> shape;
 	static TAllocBlock TNode_allocator;
-	recursive_mutex *tree_mutex;
 public:
 	TNode(recursive_mutex *parent);
 	TNode(recursive_mutex *parent, shared_ptr<T> shape);

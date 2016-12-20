@@ -35,12 +35,12 @@ int main(int argc, char *argv[])
 		case 'w': {
 			typedef function<void(void)> command;
 			NTree_2<command> tree_cmd;
-			
+
 			command cmd_insert_5 = [&]() {
 				default_random_engine generator;
 				uniform_int_distribution<int> dist(1, 100);
 
-				for (int i = 0; i < 10; i++) {
+				for (int i = 0; i < 5; i++) {
 					int side = dist(generator);
 					tree->Insert((shared_ptr<TShape>)new TPentagon(side), "r\0", "s\0");
 				}
@@ -49,14 +49,14 @@ int main(int argc, char *argv[])
 				default_random_engine generator;
 				uniform_int_distribution<int> dist(1, 100);
 
-				for (int i = 0; i < 10; i++) {
+				for (int i = 0; i < 5; i++) {
 					int side = dist(generator);
 					tree->Insert((shared_ptr<TShape>)new THexagon(side), "r\0", "s\0");
 				}
 			};
 			command cmd_insert_8 = [&]() {
 				default_random_engine generator;
-				uniform_int_distribution<int> dist(1, 1000);
+				uniform_int_distribution<int> dist(1, 100);
 
 				for (int i = 0; i < 10; i++) {
 					int side = dist(generator);
@@ -71,10 +71,22 @@ int main(int argc, char *argv[])
 				}
 				(*it_loc)->Print();
 			};
+			command cmd_size = [&]() {
+				cout << tree->Size() << endl;
+			};
+			command cmd_sort = [&]() {
+				tree->sort();
+			};
+			command cmd_parallel_sort = [&]() {
+				tree->parallel_sort();
+			};
 			tree_cmd.Insert_2(shared_ptr<command>(&cmd_print, [](command *) {}), "r\0", "r\0");
 			tree_cmd.Insert_2(shared_ptr<command>(&cmd_insert_5, [](command *) {}), "r\0", "s\0");
 			tree_cmd.Insert_2(shared_ptr<command>(&cmd_insert_6, [](command *) {}), "rs\0", "s\0");
 			tree_cmd.Insert_2(shared_ptr<command>(&cmd_insert_8, [](command *) {}), "rss\0", "s\0");
+			tree_cmd.Insert_2(shared_ptr<command>(&cmd_size, [](command *) {}), "rs\0", "b\0");
+			//tree_cmd.Insert_2(shared_ptr<command>(&cmd_sort, [](command *) {}), "rsb\0", "b\0");
+			//tree_cmd.Insert_2(shared_ptr<command>(&cmd_parallel_sort, [](command *) {}), "rsbb\0", "b\0");
 
 			TIterator<TNode_2<command>, command> it_loc = tree_cmd.begin();
 			TIterator<TNode_2<command>, command> end_loc = tree_cmd.end();
