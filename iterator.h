@@ -21,7 +21,10 @@ public:
 	}
 	shared_ptr<T> operator -> () //returns shape from current node
 	{
-		return node->GetShape();
+		if (node != nullptr) {
+			return node->GetShape();
+		}
+		else return nullptr;
 	}
 	void operator ++ () // this operator - walking of the tree. Minimum  - is the deepest son. We are going to the brother and then his minimum. But if brother null, then go to parent
 	{

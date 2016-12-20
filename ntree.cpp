@@ -37,6 +37,7 @@ template <class T> shared_ptr<TNode<T>> TNTree<T>::Search_Path(char *path)
 			if (NodePath->Son()) {
 				NodePath = NodePath->Son();
 			}
+			else return nullptr;
 			path++;
 			continue;
 		}
@@ -45,6 +46,7 @@ template <class T> shared_ptr<TNode<T>> TNTree<T>::Search_Path(char *path)
 			if (NodePath->Brother()) {
 				NodePath = NodePath->Brother();
 			}
+			else return nullptr;
 			path++;
 			continue;
 		}
@@ -86,35 +88,20 @@ template <class T> void TNTree<T>::Delete(char *path)
 	lock_guard<recursive_mutex> lock(this->tree_mutex);
 	shared_ptr<TNode<T>> removednode = this->Search_Path(path);
 	if (removednode == nullptr) {
+		cout << "DIRECTORY IS NULLPTR" << endl;
 		return;
 	}
 	shared_ptr<TNode<T>> current = this->root;
-	if (current == this->root) {
-		if (current->Son()) {
-			current->SetParent(nullptr);
-			this->root = current->Son();
-		}
-		else {
-			this->root = nullptr;
-		}
-		current = nullptr;
-		return;
-	}
 	shared_ptr<TNode<T>> parent = nullptr;
-	while (current->Son() != nullptr) {
+	while (current->Son()) {
 		parent = current;
 		current = current->Son();
 	}
 	if (current != removednode) {
 		removednode->SetShape(current->GetShape());
 	}
-	if (current->Brother()) {
-		current->SetParent(nullptr);
-		parent->SetSon(current->Brother());
-	}
-	else {
-		parent->SetSon(nullptr);
-	}
+	current->SetParent(nullptr);
+	parent->SetSon(current->Brother());
 	current = nullptr;
 }
 template <class T> void TNTree<T>::Print(char *path)
@@ -203,27 +190,25 @@ template <class T> void TNTree<T>::sort()
 
 		shared_ptr<TNTree<T>> left(new TNTree<TShape>);
 		shared_ptr<TNTree<T>> right(new TNTree<TShape>);
-		while (this->Size() != 0) {
-			shared_ptr<T> item = (this->Search_Path("r\0"))->GetShape();
-			this->Delete("r\0");
-			if (item < middle) {
-				left->Insert(item, "r\0", "r\0");
+		while (this->Size() > 0) {
+			if ((this->Search_Path("r\0"))->GetShape() < middle) {
+				left->Insert((this->Search_Path("r\0"))->GetShape(), "r\0", "s\0");
+				this->Delete("r\0");
 			}
 			else {
-				right->Insert(item, "r\0", "r\0");
+				right->Insert((this->Search_Path("r\0"))->GetShape(), "r\0", "s\0");
+				this->Delete("r\0");
 			}
 			left->sort();
 			right->sort();
-			size_t l = left->Size();
-			size_t r = right->Size();
-			while (l > 0) {
+			while (left->Size() > 0) {
 				this->Insert((left->Search_Path("r\0"))->GetShape(), "r\0", "s\0");
-				l--;
+				left->Delete("r\0");
 			}
 			this->Insert(middle, "r\0", "s\0");
-			while (r > 0) {
+			while (right->Size() > 0) {
 				this->Insert((right->Search_Path("r\0"))->GetShape(), "r\0", "s\0");
-				r--;
+				right->Delete("r\0");
 			}
 		}
 	}

@@ -85,8 +85,8 @@ int main(int argc, char *argv[])
 			tree_cmd.Insert_2(shared_ptr<command>(&cmd_insert_6, [](command *) {}), "rs\0", "s\0");
 			tree_cmd.Insert_2(shared_ptr<command>(&cmd_insert_8, [](command *) {}), "rss\0", "s\0");
 			tree_cmd.Insert_2(shared_ptr<command>(&cmd_size, [](command *) {}), "rs\0", "b\0");
-			//tree_cmd.Insert_2(shared_ptr<command>(&cmd_sort, [](command *) {}), "rsb\0", "b\0");
-			//tree_cmd.Insert_2(shared_ptr<command>(&cmd_parallel_sort, [](command *) {}), "rsbb\0", "b\0");
+			tree_cmd.Insert_2(shared_ptr<command>(&cmd_sort, [](command *) {}), "rsb\0", "b\0");
+			tree_cmd.Insert_2(shared_ptr<command>(&cmd_parallel_sort, [](command *) {}), "rsbb\0", "b\0");
 
 			TIterator<TNode_2<command>, command> it_loc = tree_cmd.begin();
 			TIterator<TNode_2<command>, command> end_loc = tree_cmd.end();
