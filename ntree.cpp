@@ -112,7 +112,7 @@ template <class T> void TNTree<T>::Print(char *path)
 		cout << "DIRECTORY IS NULLPTR" << endl;
 		return;
 	}
-	shared_ptr<TShape> shape = Path->GetShape();
+	shared_ptr<T> shape = Path->GetShape();
 	cout << "Tree:";
 	while (*path) {
 		cout << "/" << *path;
@@ -187,7 +187,6 @@ template <class T> void TNTree<T>::sort()
 	if (this->Size() > 1) {
 		shared_ptr<T> middle = (this->Search_Path("r\0"))->GetShape();
 		this->Delete("r\0");
-
 		shared_ptr<TNTree<T>> left(new TNTree<TShape>);
 		shared_ptr<TNTree<T>> right(new TNTree<TShape>);
 		while (this->Size() > 0) {
@@ -212,13 +211,13 @@ template <class T> void TNTree<T>::sort()
 			}
 		}
 	}
+	else return;
 }
 template <class T> void TNTree<T>::parallel_sort()
 {
 	if (this->Size() > 1) {
 		shared_ptr<T> middle = (this->Search_Path("r\0"))->GetShape();
 		this->Delete("r\0");
-
 		shared_ptr<TNTree<T>> left (new TNTree<TShape>);
 		shared_ptr<TNTree<T>> right(new TNTree<TShape>);
 		while (this->Size() != 0) {
@@ -232,7 +231,6 @@ template <class T> void TNTree<T>::parallel_sort()
 			}
 			future<void> left_res = left->sort_bg();
 			future<void> right_res = right->sort_bg();
-
 			left_res.get();
 			size_t l = left->Size();
 			size_t r = right->Size();
@@ -248,6 +246,7 @@ template <class T> void TNTree<T>::parallel_sort()
 			}
 		}
 	}
+	else return;
 }
 template <class T> TNTree<T>::~TNTree()
 {

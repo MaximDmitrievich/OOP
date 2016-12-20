@@ -9,7 +9,7 @@ template <class T> TNode<T>::TNode(recursive_mutex *mutex)
 	this->parent = nullptr;
 	this->tree_mutex = mutex;
 }
-template <class T> TAllocBlock TNode<T>::TNode_allocator(sizeof(TNode<T>), 1000);
+template <class T> TAllocBlock TNode<T>::TNode_allocator(sizeof(TNode<T>), 100);
 
 template <class T> void TNode<T>::SetShape(shared_ptr<T> shape)
 {
@@ -126,6 +126,7 @@ template <class T> TNode<T>::~TNode()
 {
 	son = nullptr;
 	brother = nullptr;
+	parent = nullptr;
 }
 template <class T> void *TNode<T>::operator new (size_t size) 
 {
